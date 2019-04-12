@@ -2,6 +2,8 @@ from random import shuffle
 import glob
 import sys
 import cv2
+import requests
+import os
 import http.client
 cam = cv2.VideoCapture(0)
 
@@ -25,14 +27,27 @@ while True:
         img_name = "opencv_frame_{}.jpg".format(img_counter)
         cv2.imwrite(img_name, frame)
         print("{} written!".format(img_name))
+        image_path=os.path.dirname(os.path.abspath(__file__))
+        
+        multipart_form_data = {
+            'image': (img_name, open(image_path, 'rb')),
 
-        h = http.client.HTTPConnection('github.com/googlesamples/google-photos.git')
-        h.request('PUT', img_name, open(img_name, 'rb'))
-        print(h.getresponse().read())
+        }
+
+        response = requests.post('http://www.example.com/api/v1/sensor_data/',
+                         files=multipart_form_data)
+
+        print(response.status_code)
         img_counter += 1
 cam.release()
 
 cv2.destroyAllWindows()
+
+
+
+
+
+
 
 
 
